@@ -2,6 +2,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors';
+import routerUsuario from './routers/usuarios_routes.js';
 
 // Inicializaciones
 const app = express()
@@ -14,7 +15,8 @@ app.use(cors())
 // Middlewares 
 app.use(express.json())
 
-
+// Rutas
+app.use('/api', routerUsuario)
 
 
 // Ruta para verificar que el servidor esta corriendo 

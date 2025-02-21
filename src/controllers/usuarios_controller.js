@@ -1,5 +1,5 @@
-import { createToken } from "../middlewares/autho";
-import Usuarios from "../models/Usuarios";
+import { createToken } from "../middlewares/autho.js";
+import Usuarios from "../models/Usuarios.js";
 import Estudiantes from "../models/Estudiantes.js";
 
 
@@ -7,12 +7,13 @@ import Estudiantes from "../models/Estudiantes.js";
 const LoginUsuarioAdministrador = async (req, res) => {
     //Extracción de los parametros de la solicitud 
     const {email, password} = req.body
+    console.log(email, " ", password)
     //Verificación de que los datos no estén vacíos
     if(email === '' || password === ''){
         return res.status(400).json({message: 'Por favor llene todos los campos'})
     }
     //Verificación de que el usuario exista
-    const usuario = await Usuarios.findOne({email: email})
+    const usuario = await Usuarios.findOne({email: email}).select('-__v -createdAt -updatedAt')
     if(!usuario){
         return res.status(400).json({message: 'Usuario no encontrado'})
     }

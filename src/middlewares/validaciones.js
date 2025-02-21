@@ -1,11 +1,12 @@
 import { check, validationResult } from 'express-validator';
+import moment from 'moment';
 const validacionesRegistroEstudiantes = [
     // Verificar que se encuentren los campos obligatorios y no estén vacíos
-    check(["nombre","apellido","telefono","cedula","descripcion", "fecha_nacimiento", "ciudad", "direccion", "email"])
+    check(["nombre","apellido","telefono","cedula", "fecha_nacimiento", "ciudad", "direccion", "email"])
     .exists()
-        .withMessage('Los campos "nombre","apellido","telefono","cedula","descripcion", "fecha_nacimiento", "ciudad", "direccion" y/o "email"  son obligatorios')
+        .withMessage('Los campos "nombre", "apellido", "telefono", "cedula", "fecha_nacimiento", "ciudad", "direccion" y/o "email"  son obligatorios')
     .notEmpty()
-        .withMessage('Los campos "nombre","apellido","telefono","cedula","descripcion", "fecha_nacimiento", "ciudad", "direccion" y/o "email" no pueden estar vacíos')
+        .withMessage('Los campos "nombre", "apellido", "telefono", "cedula", "fecha_nacimiento", "ciudad", "direccion" y/o "email" no pueden estar vacíos')
     .customSanitizer(value => value?.trim()),
 
     //Verificación de que todo sea un string
@@ -29,12 +30,6 @@ const validacionesRegistroEstudiantes = [
     .isNumeric()
         .withMessage('El campo "teléfono" debe contener solo números')
     .customSanitizer(value => value?.trim()), 
-
-    //Verificación de la descripción 
-    check("descripcion")
-    .isLength({ min: 10, max: 20 })
-        .withMessage('La descripción debe tener al menos 10 caracteres')
-    .customSanitizer(value => value?.trim()),
 
     // Verificación de la fecha de nacimiento
     check("fecha_nacimiento")
