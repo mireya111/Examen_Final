@@ -2,6 +2,7 @@ import { createToken } from "../middlewares/autho.js";
 import Usuarios from "../models/Usuarios.js";
 import Estudiantes from "../models/Estudiantes.js";
 import Materias from "../models/Materias.js";
+import Matriculas from "../models/Matriculas.js";
 
 
 //Controlador para el logeo del usuario administrador
@@ -187,7 +188,7 @@ const EliminarMateria = async (req, res) => {
 //Registrar matriculas 
 const RegistrarMatricula = async (req, res) => {
     //Extracción de los parametros de la solicitud 
-    const {id_estudiante, id_materia, } = req.body
+    const {id_estudiante, id_materia, descripcion } = req.body
     //Verificación de que el estudiante exista
     const estudiante = await Estudiantes.findById(id_estudiante)
     if(!estudiante){
@@ -198,14 +199,86 @@ const RegistrarMatricula = async (req, res) => {
     if(!materia){
         return res.status(400).json({message: 'La materia no existe'});
     }
+
+    const matriculaExiste = await Matriculas.findOne({id_estudiante: id_estudiante, id_materia: id_materia})
+    if(matriculaExiste){
+        return res.status(400).json({message: 'El estudiante ya está matriculado en la materia'});
+    }
+
     //Creación de una nueva matricula
     const nuevaMatricula = new Matriculas({
         id_estudiante: id_estudiante, 
-        id_materia: id_materia
+        id_materia: id_materia,
+        descripcion: descripcion
     })
     //Guardado en la base de datos
     await nuevaMatricula.save()
     return res.status(200).json({message: 'Matricula registrada exitosamente'})
+}
+
+//Listar todas las materias de un estudiante
+const BuscarEstudianteConSusMaterias = async (req, res) => {
+    const {id} = req.params
+    const matriculas = await Matriculas.find({id_estudiante: id}).populate('id_materia')
+    if (matriculas.length === 0) {
+        return res.status(404).json({message: 'No se encontraron materias inscritas para el estudiante'});
+    }
+    const materias = []
+    for (const matricula of matriculas){
+        materias.push(matricula.id_materia.nombre); 
+    }
+    return res.status(200).json({materias_inscritas: materias})
+}
+
+const BuscarMateriasYSusEstudiantes = async (req, res) => {
+    const {codigo} = req.params
+    const materias = await Matriculas.find({codigo: codigo}).populate('id_estudiante')
+    if (materias.length === 0) {
+        return res.status(404).json({message: 'No se encontraron estudiantes inscritos en la materia'});
+    }
+    const estudiantes = []
+    for (const materia of materias){
+        estudiantes.push(materia.id_estudiante.nombre); 
+    }
+    const numeroEstudiantes = estudiantes.length; 
+    return res.status(200).json({estudiantes_inscritos: estudiantes, total_estudiantes: numeroEstudiantes})
+}
+
+const ActualizarMatricula = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    //Extracción de los parametros de la solicitud 
+    const {id_estudiante, id_materia, descripcion} = req.body
+    //Verificación de que el estudiante exista
+    const estudiante = await Estudiantes.findById(id_estudiante)
+    if(!estudiante){
+        return res.status(400).json({message: 'El estudiante no existe'});
+    }
+    //Verificación de que la materia exista
+    const materia = await Materias.findById(id_materia)
+    if(!materia){
+        return res.status(400).json({message: 'La materia no existe'});
+    }
+
+    const matriculaExiste = await Matriculas.findOne({id_estudiante: id_estudiante, id_materia: id_materia})
+    if(matriculaExiste){
+        return res.status(400).json({message: 'El estudiante ya está matriculado en la materia'});
+    }
+    //Actualizar una matricula
+    await Matriculas.findByIdAndUpdate(id,req.body); 
+    return res.status(201).json({message: 'Matricula actualizada exitosamente'})
+}
+
+const EliminarMatricula = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    //Verificación de que el id no esté vacío
+    if(id === ''){
+        return res.status(400).json({message: 'Por favor coloque el id de la matricula que desea eliminar'});
+    }
+    //Eliminar una matricula
+    await Matriculas.findByIdAndDelete(id)
+    return res.status(200).json({message: 'Matricula eliminada exitosamente'})  
 }
 
 export {
@@ -219,5 +292,10 @@ export {
     VisualizarMaterias, 
     BuscarMateriasPorId, 
     ActualizarMateria, 
-    EliminarMateria
+    EliminarMateria, 
+    RegistrarMatricula, 
+    BuscarEstudianteConSusMaterias, 
+    BuscarMateriasYSusEstudiantes,
+    ActualizarMatricula, 
+    EliminarMatricula
 }

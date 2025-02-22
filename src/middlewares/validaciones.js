@@ -1,5 +1,6 @@
 import { check, validationResult } from 'express-validator';
 import moment from 'moment';
+import Materias from '../models/Materias.js';
 const validacionesRegistroEstudiantes = [
     // Verificar que se encuentren los campos obligatorios y no estén vacíos
     check(["nombre","apellido","telefono","cedula", "fecha_nacimiento", "ciudad", "direccion", "email"])
@@ -168,9 +169,44 @@ const validacionesActualizarMaterias = [
     }
 ]
 
+const validacionesRegistroMatriculas = [
+    // Verificar que se encuentren los campos obligatorios y no estén vacíos
+    check(["id_estudiante","id_materia","descripcion"])
+    .exists()
+        .withMessage('Los campos "id_estudiante", "id_materia" y/o "descripcion" son obligatorios')
+    .notEmpty()
+        .withMessage('Los campos "id_estudiante", "id_materia" y/o "descripcion" no pueden estar vacíos')
+    .customSanitizer(value => value?.trim()),
+
+    
+
+    // Verificación de la descripción
+    check("descripcion")
+    .isString()
+        .withMessage('La descripción debe ser una cadena de texto')
+    .isLength({ min: 10, max: 100 })
+        .withMessage('Solo se permiten de entre 10 a 100 caracteres')
+    .customSanitizer(value => value?.trim()),
+
+    // Verificación de los id
+    check(["id_estudiante","id_materia"])
+    .isMongoId()
+        .withMessage('El id debe ser un identificador válido de MongoDB'),
+
+    (req,res,next)=>{
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            return next();
+        } else {
+            return res.status(400).send({ errors: errors.array() });
+        }
+    }
+]
+
 export {
     validacionesRegistroEstudiantes, 
     validacionesActualizacionEstudiantes,
     validacionesRegistroMaterias, 
-    validacionesActualizarMaterias
+    validacionesActualizarMaterias, 
+    validacionesRegistroMatriculas
 }
