@@ -13,7 +13,14 @@ const matriculasEsquema = new Schema({
     },
     codigo:{
         type:Number,
-        required: true
+        required: true,
+        default: function(){
+            const fecha = new Date();
+            const anio = fecha.getFullYear();
+            const numeroDocumentos = Matriculas.find().countDocuments();
+            const numeroConCeros = (numeroDocumentos + 1).toString().padStart(4, '0');
+            return `${anio}-${numeroConCeros}`
+        }
     }, 
     descripcion:{
         type: String,

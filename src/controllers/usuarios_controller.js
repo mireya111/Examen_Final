@@ -1,6 +1,7 @@
 import { createToken } from "../middlewares/autho.js";
 import Usuarios from "../models/Usuarios.js";
 import Estudiantes from "../models/Estudiantes.js";
+import Materias from "../models/Materias.js";
 
 
 //Controlador para el logeo del usuario administrador
@@ -30,13 +31,9 @@ const LoginUsuarioAdministrador = async (req, res) => {
 
 //CRUD estudiantes 
 //Controlador para registrar un nuevo estudiante
-const registrarEstudiante = async (req, res) => {
+const RegistrarEstudiante = async (req, res) => {
     //Extracción de los parametros de la solicitud 
     const {nombre, apellido, cedula, fecha_nacimiento, ciudad, direccion, telefono, email} = req.body
-    //Verificación de que los datos no estén vacíos
-    if(nombre === '' || apellido === '' || cedula === '' || fecha_nacimiento === '' || ciudad === '' || direccion === '' || telefono === '' || email === ''){
-        return res.status(400).json({message: 'Por favor llene todos los campos'});
-    }
     //Verificación de que el usuario no exista
     const estudiante = await Estudiantes.findOne({email: email})
     if(estudiante){
@@ -69,14 +66,158 @@ const registrarEstudiante = async (req, res) => {
 }
 
 //Controlador para visualizar estudiantes
-const visualizarEstudiantes = async (req, res) => {
+const VisualizarEstudiantes = async (req, res) => {
     //Buscar todos los estudiantes 
     const estudiantes = await Estudiantes.find()
     return res.status(200).json({todos_estudiantes: estudiantes});
 }
 
+//Buscar un estudiante por su id
+const BuscarEstudiantePorId = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    //Verificación de que el id no esté vacío
+    if(id === ''){
+        return res.status(400).json({message: 'Por favor llene todos los campos'});
+    }
+    //Buscar el estudiante por su id
+    const estudiante = await Estudiantes.findById(id)
+    return res.status(200).json({estudiante: estudiante});
+}
+
+//Actualizar un estudiante          
+const ActualizarEstudiante = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    const { ciudad, direccion, telefono, email} = req.body
+    //Vertificación del telefono 
+    const estudianteTelefono = await Estudiantes.findOne({telefono: telefono});
+    if(estudianteTelefono){
+        return res.status(400).json({message: 'El telefono ya está registrado'});
+    }
+    //Verificación del email
+    const estudianteEmail = await Estudiantes.findOne({email: email});
+    if(estudianteEmail){
+        return res.status(400).json({message: 'El email ya está registrado'});
+    }
+    //Actualizar un estudiante
+    await Estudiantes.findByIdAndUpdate(id,req.body)
+    return res.status(201).json({message: 'Estudiante actualizado exitosamente'})
+}
+
+//Eliminar a un estudiante
+const EliminarEstudiante = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    //Verificación de que el id no esté vacío
+    if(id === ''){
+        return res.status(400).json({message: 'Por favor coloque el id del estudiante'});
+    }
+    //Eliminar un estudiante
+    await Estudiantes.findByIdAndDelete(id)
+    return res.status(200).json({message: 'Estudiante eliminado exitosamente'})
+}
+
+//CRUD DE LAS MATERIAS 
+//Controlador para registrar una nueva materia
+const RegistrarMateria = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {nombre, codigo, descripcion, creditos} = req.body
+    //Verificación de que la materia no exista
+    const materia = await Materias.findOne({codigo: codigo})
+    if(materia){
+        return res.status(400).json({message: 'El código de la materia ya está registrado'});
+    }
+    //Creación de una nueva materia
+    const nuevaMateria = new Materias({
+        nombre: nombre, 
+        codigo: codigo, 
+        descripcion: descripcion, 
+        creditos: creditos
+    })
+    //Guardado en la base de datos
+    await nuevaMateria.save()
+    return res.status(200).json({message: 'Materia registrada exitosamente'})
+}
+
+//Listar todas las materias 
+const VisualizarMaterias = async (req, res) => {
+    //Buscar todas las materias
+    const materias = await Materias.find()
+    return res.status(200).json({todas_materias: materias});
+}
+
+//Buscar una materia por su id
+const BuscarMateriasPorId = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    //Verificación de que el id no esté vacío
+    if(id === ''){
+        return res.status(400).json({message: 'Por favor no se encuentra el id de la materia que se desea buscar'});
+    }
+    //Buscar la materia por su id
+    const materia = await Materias.findById(id)
+    return res.status(200).json({materia: materia});
+}
+
+//Actualizar una materia       
+const ActualizarMateria = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    const { nombre, descripcion, creditos} = req.body
+    //Actualizar una materia
+    await Materias.findByIdAndUpdate(id,req.body)
+    return res.status(201).json({message: 'Materia actualizada exitosamente'})
+}
+
+//Eliminar una materia
+const EliminarMateria = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id} = req.params
+    //Verificación de que el id no esté vacío
+    if(id === ''){
+        return res.status(400).json({message: 'Por favor coloque el id de la materia que desea eliminar'});
+    }
+    //Eliminar una materia
+    await Materias.findByIdAndDelete(id)
+    return res.status(200).json({message: 'Materia eliminada exitosamente'})
+}
+
+//CRUD de matriculas 
+//Registrar matriculas 
+const RegistrarMatricula = async (req, res) => {
+    //Extracción de los parametros de la solicitud 
+    const {id_estudiante, id_materia, } = req.body
+    //Verificación de que el estudiante exista
+    const estudiante = await Estudiantes.findById(id_estudiante)
+    if(!estudiante){
+        return res.status(400).json({message: 'El estudiante no existe'});
+    }
+    //Verificación de que la materia exista
+    const materia = await Materias.findById(id_materia)
+    if(!materia){
+        return res.status(400).json({message: 'La materia no existe'});
+    }
+    //Creación de una nueva matricula
+    const nuevaMatricula = new Matriculas({
+        id_estudiante: id_estudiante, 
+        id_materia: id_materia
+    })
+    //Guardado en la base de datos
+    await nuevaMatricula.save()
+    return res.status(200).json({message: 'Matricula registrada exitosamente'})
+}
+
 export {
     LoginUsuarioAdministrador,
-    registrarEstudiante, 
-    visualizarEstudiantes
+    RegistrarEstudiante,
+    VisualizarEstudiantes,
+    BuscarEstudiantePorId,
+    ActualizarEstudiante,
+    EliminarEstudiante, 
+    RegistrarMateria, 
+    VisualizarMaterias, 
+    BuscarMateriasPorId, 
+    ActualizarMateria, 
+    EliminarMateria
 }

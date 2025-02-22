@@ -1,7 +1,7 @@
 import {Schema, model} from 'mongoose'
 
 //Definición de la estructura de datos 
-const estudianteEsquema = new Schema({
+const materiaEsquema = new Schema({
     nombre: {
         type: String,
         required: true
@@ -25,4 +25,4 @@ const estudianteEsquema = new Schema({
 
 )
 
-export default model('Estudiantes', estudianteEsquema)
+export default model('Materias', materiaEsquema)
