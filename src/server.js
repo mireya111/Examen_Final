@@ -15,14 +15,14 @@ app.use(cors())
 // Middlewares 
 app.use(express.json())
 
-// Rutas
-app.use('/api', routerUsuario)
-
 
 // Ruta para verificar que el servidor esta corriendo 
 app.get('/',(req,res)=>{
     res.send("El servidor para el examen final esta corriendo")
 })
+
+// Rutas
+app.use('/api', routerUsuario)
 
 // Exportar la instancia de express por medio de app
 export default  app
