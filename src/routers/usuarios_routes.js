@@ -10,6 +10,9 @@ import { validacionesRegistroEstudiantes, validacionesActualizacionEstudiantes, 
 const router = Router(); 
 //Rutas públicas
 router.post('/login', LoginUsuarioAdministrador);
+
+//Rutas privadas para administradores
+
 //Rutas privadas para estudiantes
 router.post('/registrar/estudiantes', verificacionToken, verificacionUsuarioAdministrador, validacionesRegistroEstudiantes, RegistrarEstudiante);
 router.get('/listado/estudiantes', verificacionToken, verificacionUsuarioAdministrador, VisualizarEstudiantes);

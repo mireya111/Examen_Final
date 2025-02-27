@@ -19,11 +19,14 @@ const LoginUsuarioAdministrador = async (req, res) => {
     if(!usuario){
         return res.status(400).json({message: 'Usuario no encontrado'})
     }
+    console.log(usuario)
     //Verificación de que la contraseña sea correcta
     const verificacionDeContrasenia = await usuario.matchPassword(password)
+    console.log(verificacionDeContrasenia)
     if(verificacionDeContrasenia){
         //Token JWT
         const token = createToken({id: usuario._id, email: usuario.email, role: "admin"})
+        console.log(token)
         return res.status(200).json({token, info_logeado: usuario})
     } else{
         return res.status(400).json({message: 'Contraseña incorrecta'})
