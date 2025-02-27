@@ -27,10 +27,17 @@ const LoginUsuarioAdministrador = async (req, res) => {
         //Token JWT
         const token = createToken({id: usuario._id, email: usuario.email, role: "admin"})
         console.log(token)
-        return res.status(200).json({token, info_logeado: usuario})
+        return res.status(200).json({token: token})
     } else{
         return res.status(400).json({message: 'Contraseña incorrecta'})
     }
+}
+
+//Controlador para visualizar el perfil del usuario
+const VisualizarPerfil = async (req, res) => {
+    const {id} = req.usuario
+    const usuario = await Usuarios.findById(id).select('-__v -createdAt -updatedAt -password')
+    return res.status(200).json({usuario: usuario})
 }
 
 //CRUD estudiantes 
@@ -286,6 +293,7 @@ const EliminarMatricula = async (req, res) => {
 
 export {
     LoginUsuarioAdministrador,
+    VisualizarPerfil,
     RegistrarEstudiante,
     VisualizarEstudiantes,
     BuscarEstudiantePorId,
