@@ -11,7 +11,7 @@ const LoginUsuarioAdministrador = async (req, res) => {
     const {email, password} = req.body
     console.log(email, " ", password)
     //Verificación de que los datos no estén vacíos
-    if(email === '' || password === ''){
+    if(email === undefined || password === undefined){
         return res.status(400).json({message: 'Por favor llene todos los campos'})
     }
     //Verificación de que el usuario exista
