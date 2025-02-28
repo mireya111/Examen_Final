@@ -17,7 +17,7 @@ const LoginUsuarioAdministrador = async (req, res) => {
     //Verificación de que el usuario exista
     const usuario = await Usuarios.findOne({email: email}).select('-__v -createdAt -updatedAt')
     if(!usuario){
-        return res.status(400).json({message: 'Usuario no encontrado'})
+        return res.status(400).json({message: 'Usuario o contraseña incorrectos.'})
     }
     console.log(usuario)
     //Verificación de que la contraseña sea correcta
@@ -29,7 +29,7 @@ const LoginUsuarioAdministrador = async (req, res) => {
         console.log(token)
         return res.status(200).json({token: token})
     } else{
-        return res.status(400).json({message: 'Contraseña incorrecta'})
+        return res.status(400).json({message: 'Usuario o contraseña incorrectos.'})
     }
 }
 
