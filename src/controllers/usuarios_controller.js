@@ -35,7 +35,7 @@ const LoginUsuarioAdministrador = async (req, res) => {
 
 //Controlador para visualizar el perfil del usuario
 const VisualizarPerfil = async (req, res) => {
-    const {id} = req.usuario
+    const {id} = req.user
     const usuario = await Usuarios.findById(id).select('-__v -createdAt -updatedAt -password')
     return res.status(200).json({usuario: usuario})
 }
