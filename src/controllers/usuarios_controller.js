@@ -86,7 +86,7 @@ const VisualizarEstudiantes = async (req, res) => {
 //Buscar un estudiante por su id
 const BuscarEstudiantePorCedula = async (req, res) => {
     //Extracción de los parametros de la solicitud 
-    const {cedula} = req.body
+    const {cedula} = req.params
     //Verificación de que la cedula no esté vacía
     if(cedula === ''){
         return res.status(400).json({message: 'Por favor coloque una cedula para buscar el estudiante'});
@@ -229,7 +229,7 @@ const RegistrarMatricula = async (req, res) => {
 //Listar todas las materias de un estudiante
 const BuscarEstudianteConSusMaterias = async (req, res) => {
     try {
-        const {cedula} = req.body;
+        const {cedula} = req.params;
 
         // Verificación de que la cédula no esté vacía
         if (!cedula) {
@@ -264,7 +264,7 @@ const BuscarEstudianteConSusMaterias = async (req, res) => {
 //Listar todos los estudiantes de una materia
 const BuscarMateriasYSusEstudiantes = async (req, res) => {
     try {
-        const {nombre} = req.body;
+        const {nombre} = req.params;
 
         // Verificación de que el nombre no esté vacío
         if (!nombre) {
