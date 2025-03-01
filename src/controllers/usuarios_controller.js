@@ -74,12 +74,12 @@ const VisualizarEstudiantes = async (req, res) => {
 }
 
 //Buscar un estudiante por su id
-const BuscarEstudiantePorId = async (req, res) => {
+const BuscarEstudiantePorCedula = async (req, res) => {
     //Extracción de los parametros de la solicitud 
-    const {id} = req.params
-    //Verificación de que el id no esté vacío
-    if(id === ''){
-        return res.status(400).json({message: 'Por favor llene todos los campos'});
+    const {cedula} = req.body
+    //Verificación de que la cedula no esté vacía
+    if(cedula === ''){
+        return res.status(400).json({message: 'Por favor coloque una cedula para buscar el estudiante'});
     }
     //Buscar el estudiante por su id
     const estudiante = await Estudiantes.findById(id)
@@ -149,12 +149,12 @@ const VisualizarMaterias = async (req, res) => {
 }
 
 //Buscar una materia por su id
-const BuscarMateriasPorId = async (req, res) => {
+const BuscarMateriasPorNombre = async (req, res) => {
     //Extracción de los parametros de la solicitud 
-    const {id} = req.params
-    //Verificación de que el id no esté vacío
-    if(id === ''){
-        return res.status(400).json({message: 'Por favor no se encuentra el id de la materia que se desea buscar'});
+    const {nombre} = req.params
+    //Verificación de que el nombre no esté vacío
+    if(nombre === ''){
+        return res.status(400).json({message: 'Por favor coloque el nombre de la materia que desea buscar'});
     }
     //Buscar la materia por su id
     const materia = await Materias.findById(id)
@@ -218,30 +218,75 @@ const RegistrarMatricula = async (req, res) => {
 
 //Listar todas las materias de un estudiante
 const BuscarEstudianteConSusMaterias = async (req, res) => {
-    const {id} = req.params
-    const matriculas = await Matriculas.find({id_estudiante: id}).populate('id_materia')
-    if (matriculas.length === 0) {
-        return res.status(404).json({message: 'No se encontraron materias inscritas para el estudiante'});
+    try {
+        const {cedula} = req.body;
+
+        // Verificación de que la cédula no esté vacía
+        if (!cedula) {
+            return res.status(400).json({message: 'Por favor proporcione la cédula del estudiante'});
+        }
+
+        // Buscar estudiante por cédula
+        const estudiante = await Estudiantes.findOne({cedula});
+        if (!estudiante) {
+            return res.status(404).json({message: 'No se encontraron estudiantes con la cédula proporcionada'});
+        }
+
+        // Buscar las matrículas del estudiante y popular la información de las materias
+        const matriculas = await Matriculas.find({id_estudiante: estudiante._id}).populate('id_materia');
+        if (matriculas.length === 0) {
+            return res.status(404).json({message: 'No se encontraron materias inscritas para el estudiante'});
+        }
+
+        // Acumular todas las materias inscritas
+        const materias = [];
+        for (const matricula of matriculas) {
+            materias.push(matricula.id_materia.nombre);
+        }
+
+        return res.status(200).json({materias_inscritas: materias});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({message: 'Error al buscar las materias del estudiante'});
     }
-    const materias = []
-    for (const matricula of matriculas){
-        materias.push(matricula.id_materia.nombre); 
-    }
-    return res.status(200).json({materias_inscritas: materias})
 }
 
+//Listar todos los estudiantes de una materia
 const BuscarMateriasYSusEstudiantes = async (req, res) => {
-    const {codigo} = req.params
-    const materias = await Matriculas.find({codigo: codigo}).populate('id_estudiante')
-    if (materias.length === 0) {
-        return res.status(404).json({message: 'No se encontraron estudiantes inscritos en la materia'});
+    try {
+        const {nombre} = req.body;
+
+        // Verificación de que el nombre no esté vacío
+        if (!nombre) {
+            return res.status(400).json({message: 'Por favor proporcione el nombre de la materia'});
+        }
+
+        // Buscar la materia por nombre
+        const materia = await Materias.findOne({nombre});
+        if (!materia) {
+            return res.status(404).json({message: 'No se encontró la materia con el nombre proporcionado'});
+        }
+
+        // Buscar las matrículas de la materia y popular la información de los estudiantes
+        const matriculas = await Matriculas.find({id_materia: materia._id}).populate('id_estudiante');
+        
+        // Verificación de que la materia tenga estudiantes inscritos
+        if (matriculas.length === 0) {
+            return res.status(404).json({message: 'No se encontraron estudiantes inscritos en la materia'});
+        }
+
+        // Extraer los nombres de los estudiantes usando un bucle for
+        const estudiantes = [];
+        for (const matricula of matriculas) {
+            estudiantes.push(matricula.id_estudiante.nombre);
+        }
+        const numeroEstudiantes = estudiantes.length;
+
+        return res.status(200).json({estudiantes_inscritos: estudiantes, total_estudiantes: numeroEstudiantes});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({message: 'Error al buscar los estudiantes inscritos en la materia'});
     }
-    const estudiantes = []
-    for (const materia of materias){
-        estudiantes.push(materia.id_estudiante.nombre); 
-    }
-    const numeroEstudiantes = estudiantes.length; 
-    return res.status(200).json({estudiantes_inscritos: estudiantes, total_estudiantes: numeroEstudiantes})
 }
 
 const ActualizarMatricula = async (req, res) => {
@@ -285,12 +330,12 @@ export {
     LoginUsuarioAdministrador,
     RegistrarEstudiante,
     VisualizarEstudiantes,
-    BuscarEstudiantePorId,
+    BuscarEstudiantePorCedula,
     ActualizarEstudiante,
     EliminarEstudiante, 
     RegistrarMateria, 
     VisualizarMaterias, 
-    BuscarMateriasPorId, 
+    BuscarMateriasPorNombre, 
     ActualizarMateria, 
     EliminarMateria, 
     RegistrarMatricula, 
