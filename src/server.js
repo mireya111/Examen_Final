@@ -9,7 +9,7 @@ const app = express()
 dotenv.config()
 
 // Configuraciones 
-app.set('port',process.env.port || 3000)
+app.set('port',process.env.PORT || 3000)
 app.use(cors())
 
 // Middlewares 
@@ -25,4 +25,4 @@ app.get('/',(req,res)=>{
 app.use('/api', routerUsuario)
 
 // Exportar la instancia de express por medio de app
-export default  app
+export default  app;

@@ -11,23 +11,33 @@ const LoginUsuarioAdministrador = async (req, res) => {
     const {email, password} = req.body
     console.log(email, " ", password)
     //Verificación de que los datos no estén vacíos
-    if(email === '' || password === ''){
+    if(email === undefined || password === undefined){
         return res.status(400).json({message: 'Por favor llene todos los campos'})
     }
     //Verificación de que el usuario exista
     const usuario = await Usuarios.findOne({email: email}).select('-__v -createdAt -updatedAt')
     if(!usuario){
-        return res.status(400).json({message: 'Usuario no encontrado'})
+        return res.status(400).json({message: 'Usuario o contraseña incorrectos.'})
     }
+    console.log(usuario)
     //Verificación de que la contraseña sea correcta
     const verificacionDeContrasenia = await usuario.matchPassword(password)
+    console.log(verificacionDeContrasenia)
     if(verificacionDeContrasenia){
         //Token JWT
         const token = createToken({id: usuario._id, email: usuario.email, role: "admin"})
-        return res.status(200).json({token, info_logeado: usuario})
+        console.log(token)
+        return res.status(200).json({token: token})
     } else{
-        return res.status(400).json({message: 'Contraseña incorrecta'})
+        return res.status(400).json({message: 'Usuario o contraseña incorrectos.'})
     }
+}
+
+//Controlador para visualizar el perfil del usuario
+const VisualizarPerfil = async (req, res) => {
+    const {id} = req.user
+    const usuario = await Usuarios.findById(id).select('-__v -createdAt -updatedAt -password')
+    return res.status(200).json({usuario: usuario})
 }
 
 //CRUD estudiantes 
@@ -328,6 +338,7 @@ const EliminarMatricula = async (req, res) => {
 
 export {
     LoginUsuarioAdministrador,
+    VisualizarPerfil,
     RegistrarEstudiante,
     VisualizarEstudiantes,
     BuscarEstudiantePorCedula,
