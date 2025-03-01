@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {LoginUsuarioAdministrador, RegistrarEstudiante, VisualizarEstudiantes, BuscarEstudiantePorCedula, ActualizarEstudiante, 
+import {LoginUsuarioAdministrador, VisualizarPerfil, RegistrarEstudiante, VisualizarEstudiantes, BuscarEstudiantePorCedula, ActualizarEstudiante, 
     EliminarEstudiante,  RegistrarMateria, VisualizarMaterias, BuscarMateriasPorNombre, ActualizarMateria, EliminarMateria,
     RegistrarMatricula, BuscarEstudianteConSusMaterias, BuscarMateriasYSusEstudiantes, ActualizarMatricula, EliminarMatricula
 } from '../controllers/usuarios_controller.js';    
@@ -10,6 +10,10 @@ import { validacionesRegistroEstudiantes, validacionesActualizacionEstudiantes, 
 const router = Router(); 
 //Rutas públicas
 router.post('/login', LoginUsuarioAdministrador);
+
+//Rutas privadas para admin
+router.get('visualizar/perfil', verificacionToken, verificacionUsuarioAdministrador, VisualizarPerfil);
+
 //Rutas privadas para estudiantes
 router.post('/registrar/estudiantes', verificacionToken, verificacionUsuarioAdministrador, validacionesRegistroEstudiantes, RegistrarEstudiante);
 router.get('/listado/estudiantes', verificacionToken, verificacionUsuarioAdministrador, VisualizarEstudiantes);
