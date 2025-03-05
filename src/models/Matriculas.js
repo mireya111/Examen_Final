@@ -12,7 +12,8 @@ const matriculasEsquema = new Schema({
         required: true
     },
     codigo:{
-        type:Number
+        type:Number, 
+        required: true
     }, 
     descripcion:{
         type: String,
