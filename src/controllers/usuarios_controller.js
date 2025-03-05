@@ -3,6 +3,7 @@ import Usuarios from "../models/Usuarios.js";
 import Estudiantes from "../models/Estudiantes.js";
 import Materias from "../models/Materias.js";
 import Matriculas from "../models/Matriculas.js";
+import crypto from 'crypto';
 
 
 //Controlador para el logeo del usuario administrador
