@@ -175,7 +175,7 @@ const BuscarMateriasPorNombre = async (req, res) => {
 const ActualizarMateria = async (req, res) => {
     //Extracción de los parametros de la solicitud 
     const {id} = req.params
-    const { nombre, descripcion, creditos} = req.body
+    const { nombre, descripcion, creditos, codigo} = req.body
     //Actualizar una materia
     await Materias.findByIdAndUpdate(id,req.body)
     return res.status(201).json({message: 'Materia actualizada exitosamente'})
