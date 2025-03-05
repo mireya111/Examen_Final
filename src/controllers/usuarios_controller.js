@@ -72,14 +72,17 @@ const RegistrarEstudiante = async (req, res) => {
         email: email
     })
     //Guardado en la base de datos
-    await nuevoEstudiante.save()
-    return res.status(201).json({message: 'Estudiante registrado exitosamente'})
+    await nuevoEstudiante.save();
+    return res.status(201).json({message: 'Estudiante registrado exitosamente'});
 }
 
 //Controlador para visualizar estudiantes
 const VisualizarEstudiantes = async (req, res) => {
     //Buscar todos los estudiantes 
-    const estudiantes = await Estudiantes.find()
+    const estudiantes = await Estudiantes.find();
+    if(estudiantes.length === 0){
+         return res.status(201).json({message: 'No se encuentran registrados los estudiantes'})
+    };
     return res.status(200).json({todos_estudiantes: estudiantes});
 }
 
@@ -91,6 +94,10 @@ const BuscarEstudiantePorCedula = async (req, res) => {
     if(cedula === ''){
         return res.status(400).json({message: 'Por favor coloque una cedula para buscar el estudiante'});
     }
+    const estudiante = await Estudiantes.findById(id);
+    if(!estudiante){
+        return res.status(400).json({message: 'No se enceuntra registrado el estudainte'});
+    }
     //Buscar el estudiante por su cedula
     const estudiante = await Estudiantes.findOne({cedula:cedula}); 
     return res.status(200).json({estudiante: estudiante});
@@ -101,6 +108,10 @@ const ActualizarEstudiante = async (req, res) => {
     //Extracción de los parametros de la solicitud 
     const {id} = req.params
     const { ciudad, direccion, telefono, email} = req.body
+    const estudiante = await Estudiantes.findById(id);
+    if(!estudiante){
+        return res.status(400).json({message: 'No se enceuntra registrado el estudainte'});
+    }
     //Vertificación del telefono 
     const estudianteTelefono = await Estudiantes.findOne({telefono, _id: { $ne: id } });
     if(estudianteTelefono){
@@ -120,6 +131,10 @@ const ActualizarEstudiante = async (req, res) => {
 const EliminarEstudiante = async (req, res) => {
     //Extracción de los parametros de la solicitud 
     const {id} = req.params
+    const estudiante = await Estudiantes.findById(id);
+    if(!estudiante){
+        return res.status(400).json({message: 'No se enceuntra registrado el estudainte'});
+    }
     //Verificación de que el id no esté vacío
     if(id === ''){
         return res.status(400).json({message: 'Por favor coloque el id del estudiante'});
@@ -155,6 +170,9 @@ const RegistrarMateria = async (req, res) => {
 const VisualizarMaterias = async (req, res) => {
     //Buscar todas las materias
     const materias = await Materias.find()
+    if(materias.length === 0){
+        return res.status(200).json({message: 'No se encuentran registradas materias'})
+    }
     return res.status(200).json({todas_materias: materias});
 }
 
@@ -166,6 +184,10 @@ const BuscarMateriasPorNombre = async (req, res) => {
     if(nombre === ''){
         return res.status(400).json({message: 'Por favor coloque el nombre de la materia que desea buscar'});
     }
+    const materia =  await Materias.findById(id); 
+    if(!materia){
+        return res.status(400).json({message: 'La materia no se encuentra registrada'});
+    };
     //Buscar la materia por su id
     const materia = await Materias.findOne({nombre:nombre});
     return res.status(200).json({materia: materia});
@@ -176,6 +198,10 @@ const ActualizarMateria = async (req, res) => {
     //Extracción de los parametros de la solicitud 
     const {id} = req.params
     const { nombre, descripcion, creditos, codigo} = req.body
+    const materia =  await Materias.findById(id); 
+    if(!materia){
+        return res.status(400).json({message: 'La materia no se encuentra registrada'});
+    };
     //Actualizar una materia
     await Materias.findByIdAndUpdate(id,req.body)
     return res.status(201).json({message: 'Materia actualizada exitosamente'})
@@ -185,10 +211,14 @@ const ActualizarMateria = async (req, res) => {
 const EliminarMateria = async (req, res) => {
     //Extracción de los parametros de la solicitud 
     const {id} = req.params
+    const materia =  await Materias.findById(id); 
     //Verificación de que el id no esté vacío
     if(id === ''){
         return res.status(400).json({message: 'Por favor coloque el id de la materia que desea eliminar'});
-    }
+    };
+    if(!materia){
+        return res.status(400).json({message: 'La materia no se encuentra registrada'});
+    };
     //Eliminar una materia
     await Materias.findByIdAndDelete(id)
     return res.status(200).json({message: 'Materia eliminada exitosamente'})
