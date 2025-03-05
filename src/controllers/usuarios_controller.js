@@ -227,7 +227,7 @@ const EliminarMateria = async (req, res) => {
 //Registrar matriculas 
 const RegistrarMatricula = async (req, res) => {
     //Extracción de los parametros de la solicitud 
-    const {id_estudiante, id_materia, descripcion } = req.body
+    const {id_estudiante, id_materia, descripcion, codigo } = req.body
     //Verificación de que el estudiante exista
     const estudiante = await Estudiantes.findById(id_estudiante)
     if(!estudiante){
@@ -248,10 +248,11 @@ const RegistrarMatricula = async (req, res) => {
     const nuevaMatricula = new Matriculas({
         id_estudiante: id_estudiante, 
         id_materia: id_materia,
+        codigo: codigo
         descripcion: descripcion
     })
-    const randomCodigo= crypto.randomBytes(5).toNumber('hex');
-    nuevaMatricula.codigo = randomCodigo
+    //const randomCodigo= crypto.randomBytes(5).toNumber('hex');
+    //nuevaMatricula.codigo = randomCodigo
     //Guardado en la base de datos
     await nuevaMatricula.save()
     return res.status(200).json({message: 'Matricula registrada exitosamente'})
