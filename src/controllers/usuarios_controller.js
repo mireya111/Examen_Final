@@ -102,12 +102,12 @@ const ActualizarEstudiante = async (req, res) => {
     const {id} = req.params
     const { ciudad, direccion, telefono, email} = req.body
     //Vertificación del telefono 
-    const estudianteTelefono = await Estudiantes.findOne({telefono: telefono});
+    const estudianteTelefono = await Estudiantes.findOne({telefono, _id: { $ne: id } });
     if(estudianteTelefono){
         return res.status(400).json({message: 'El telefono ya está registrado'});
     }
     //Verificación del email
-    const estudianteEmail = await Estudiantes.findOne({email: email});
+    const estudianteEmail = await Estudiantes.findOne({email, _id: { $ne: id } });
     if(estudianteEmail){
         return res.status(400).json({message: 'El email ya está registrado'});
     }
