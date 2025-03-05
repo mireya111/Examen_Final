@@ -251,6 +251,7 @@ const RegistrarMatricula = async (req, res) => {
         descripcion: descripcion
     })
     const randomCodigo= crypto.randomBytes(5).toString('hex');
+    parseInt(randomCodigo, 16);
     nuevaMatricula.codigo = randomCodigo
     //Guardado en la base de datos
     await nuevaMatricula.save()
