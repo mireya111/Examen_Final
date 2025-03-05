@@ -24,12 +24,4 @@ const matriculasEsquema = new Schema({
         timestamps: true
     }
 ); 
-matriculasEsquema.pre('save', function (next) {
-    const fecha = new Date();
-    const anio = fecha.getFullYear();
-    const numeroDocumentos = Matriculas.find().countDocuments();
-    const numeroConCeros = (numeroDocumentos + 1).toString().padStart(4, '0');
-    this. codigo =  `${anio}-${numeroConCeros}`;
-    next()
-});
 export default model('Matriculas', matriculasEsquema); 
