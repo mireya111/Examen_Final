@@ -25,7 +25,7 @@ router.delete('/eliminar/estudiantes/:id', verificacionToken, verificacionUsuari
 router.post('/registrar/materias', verificacionToken, verificacionUsuarioAdministrador, validacionesRegistroMaterias, RegistrarMateria);
 router.get('/listado/materias', verificacionToken, verificacionUsuarioAdministrador, VisualizarMaterias);
 router.get('/buscar/materias/:nombre', verificacionToken, verificacionUsuarioAdministrador, BuscarMateriasPorNombre);
-router.patch('/actualizar/materias/:id', verificacionToken, verificacionUsuarioAdministrador, validacionesActualizarMaterias, ActualizarMateria);
+router.patch('/actualizar/materias/:id', verificacionToken, verificacionUsuarioAdministrador, validacionesRegistroMaterias, ActualizarMateria);
 router.delete('/eliminar/materias/:id', verificacionToken, verificacionUsuarioAdministrador, EliminarMateria);
 
 //Rutas privadas para matricular 
