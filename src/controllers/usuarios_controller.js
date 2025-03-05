@@ -248,7 +248,7 @@ const RegistrarMatricula = async (req, res) => {
     const nuevaMatricula = new Matriculas({
         id_estudiante: id_estudiante, 
         id_materia: id_materia,
-        codigo: codigo
+        codigo: codigo,
         descripcion: descripcion
     })
     //const randomCodigo= crypto.randomBytes(5).toNumber('hex');
