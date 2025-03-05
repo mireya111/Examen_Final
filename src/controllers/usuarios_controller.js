@@ -94,12 +94,11 @@ const BuscarEstudiantePorCedula = async (req, res) => {
     if(cedula === ''){
         return res.status(400).json({message: 'Por favor coloque una cedula para buscar el estudiante'});
     }
-    const estudiante = await Estudiantes.findById(id);
-    if(!estudiante){
-        return res.status(400).json({message: 'No se enceuntra registrado el estudainte'});
-    }
     //Buscar el estudiante por su cedula
     const estudianteEncontrado = await Estudiantes.findOne({cedula:cedula}); 
+    if(!estudianteEncontrado){
+        return res.status(400).json({message: 'No se enceuntra registrado el estudainte'});
+    }
     return res.status(200).json({estudiante: estudianteEncontrado});
 }
 
@@ -184,12 +183,11 @@ const BuscarMateriasPorNombre = async (req, res) => {
     if(nombre === ''){
         return res.status(400).json({message: 'Por favor coloque el nombre de la materia que desea buscar'});
     }
-    const materia =  await Materias.findById(id); 
+    //Buscar la materia por su nombre
+    const materiaEncontrada = await Materias.findOne({nombre:nombre});
     if(!materia){
         return res.status(400).json({message: 'La materia no se encuentra registrada'});
     };
-    //Buscar la materia por su id
-    const materiaEncontrada = await Materias.findOne({nombre:nombre});
     return res.status(200).json({materia: materiaEncontrada });
 }
 
