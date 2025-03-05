@@ -12,7 +12,7 @@ const router = Router();
 router.post('/login', LoginUsuarioAdministrador);
 
 //Rutas privadas para admin
-router.get('visualizar/perfil', verificacionToken, verificacionUsuarioAdministrador, VisualizarPerfil);
+router.get('/visualizar/perfil', verificacionToken, verificacionUsuarioAdministrador, VisualizarPerfil);
 
 //Rutas privadas para estudiantes
 router.post('/registrar/estudiantes', verificacionToken, verificacionUsuarioAdministrador, validacionesRegistroEstudiantes, RegistrarEstudiante);
