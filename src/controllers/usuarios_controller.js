@@ -242,12 +242,11 @@ const RegistrarMatricula = async (req, res) => {
     if(matriculaExiste){
         return res.status(400).json({message: 'El estudiante ya está matriculado en la materia'});
     }
-    const codigoAleatorio = await nuevaMatricula.codigoMatricula(); 
+    
     //Creación de una nueva matricula
     const nuevaMatricula = new Matriculas({
         id_estudiante: id_estudiante, 
         id_materia: id_materia,
-        codigo: codigoAleatorio, 
         descripcion: descripcion
     })
     //Guardado en la base de datos
