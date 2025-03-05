@@ -92,7 +92,7 @@ const BuscarEstudiantePorCedula = async (req, res) => {
         return res.status(400).json({message: 'Por favor coloque una cedula para buscar el estudiante'});
     }
     //Buscar el estudiante por su cedula
-    const estudiante = await Estudiantes.findOne(cedula); 
+    const estudiante = await Estudiantes.findOne({cedula:cedula}); 
     return res.status(200).json({estudiante: estudiante});
 }
 
