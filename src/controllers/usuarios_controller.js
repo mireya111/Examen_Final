@@ -167,7 +167,7 @@ const BuscarMateriasPorNombre = async (req, res) => {
         return res.status(400).json({message: 'Por favor coloque el nombre de la materia que desea buscar'});
     }
     //Buscar la materia por su id
-    const materia = await Materias.findById(id)
+    const materia = await Materias.findOne({nombre:nombre});
     return res.status(200).json({materia: materia});
 }
 
