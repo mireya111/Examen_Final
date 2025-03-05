@@ -247,7 +247,7 @@ const RegistrarMatricula = async (req, res) => {
     const nuevaMatricula = new Matriculas({
         id_estudiante: id_estudiante, 
         id_materia: id_materia,
-        codigo: await Matriculas.codigoMatricula(),
+        codigo: await nuevaMatricula.codigoMatricula(),
         descripcion: descripcion
     })
     //Guardado en la base de datos
