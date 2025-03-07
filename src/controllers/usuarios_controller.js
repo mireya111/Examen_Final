@@ -186,7 +186,7 @@ const BuscarMateriasPorNombre = async (req, res) => {
     }
     //Buscar la materia por su nombre
     const materiaEncontrada = await Materias.findOne({nombre:nombre});
-    if(!materia){
+    if(!materiaEncontrada){
         return res.status(400).json({message: 'La materia no se encuentra registrada'});
     };
     return res.status(200).json({materia: materiaEncontrada });
